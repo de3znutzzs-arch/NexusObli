@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus — Your Digital Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --border: #e5e2dc;
+  --text: #1c1917;
+  --text2: #6b6560;
+  --text3: #a09990;
+  --accent: #1c4fd8;
+  --accent-light: #dce8ff;
+  --accent2: #e85d26;
+  --green: #16a34a;
+  --green-light: #dcfce7;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --header-h: 64px;
+  --sidebar-w: 260px;
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Sora', sans-serif;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1c1b19;
+  --surface2: #242320;
+  --border: #2e2c28;
+  --text: #f5f4f0;
+  --text2: #9e9b94;
+  --text3: #6b6860;
+  --accent: #4f7ef0;
+  --accent-light: #1a2a4a;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background 0.3s, color 0.3s}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:var(--font)}
+input,textarea{font-family:var(--font)}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* ─── HEADER ─── */
+#header {
+  position: fixed;top:0;left:0;right:0;height:var(--header-h);
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.header-logo {
+  display:flex;align-items:center;gap:10px;font-family:var(--font-display);
+  font-size:1.2rem;font-weight:700;color:var(--text);cursor:pointer;
+}
+.header-logo svg{width:32px;height:32px}
+.header-spacer{flex:1}
+.header-nav{display:flex;align-items:center;gap:8px}
+.btn-icon {
+  width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;
+  justify-content:center;color:var(--text2);transition:var(--transition);
+  background:transparent;
+}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.btn-primary {
+  padding:8px 20px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;
+  font-size:.875rem;font-weight:600;font-family:var(--font);transition:var(--transition);
+  letter-spacing:.01em;
+}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+.btn-secondary {
+  padding:8px 20px;border-radius:var(--radius-sm);background:var(--surface2);
+  color:var(--text);font-size:.875rem;font-weight:500;font-family:var(--font);
+  transition:var(--transition);border:1px solid var(--border);
+}
+.btn-secondary:hover{background:var(--border)}
+
+/* ─── AVATAR ─── */
+.avatar {
+  width:36px;height:36px;border-radius:50%;background:var(--accent);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:700;font-size:.9rem;
+  cursor:pointer;overflow:hidden;flex-shrink:0;
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+
+/* ─── PAGES ─── */
+.page{display:none;min-height:calc(100vh - var(--header-h));margin-top:var(--header-h)}
+.page.active{display:block}
+
+/* ─── HOME PAGE ─── */
+#page-home {
+  padding:64px 28px 80px;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-light) 0%, transparent 70%);
+}
+.home-hero {
+  text-align:center;max-width:680px;margin:0 auto 72px;
+  animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both;
+}
+.home-hero h1 {
+  font-family:var(--font-display);font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:20px;
+}
+.home-hero h1 span{color:var(--accent)}
+.home-hero p{font-size:1.1rem;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto}
+.home-apps {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:24px;max-width:1000px;margin:0 auto;
+}
+.app-card {
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:36px 32px;cursor:pointer;transition:var(--transition);position:relative;
+  overflow:hidden;animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both;
+}
+.app-card:nth-child(2){animation-delay:.1s}
+.app-card::before {
+  content:'';position:absolute;inset:0;opacity:0;transition:var(--transition);
+  border-radius:20px;
+}
+.app-card.chatly::before{background:linear-gradient(135deg,rgba(28,79,216,.06),rgba(28,79,216,.02))}
+.app-card.compluto::before{background:linear-gradient(135deg,rgba(232,93,38,.06),rgba(232,93,38,.02))}
+.app-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.app-card:hover::before{opacity:1}
+.app-icon {
+  width:64px;height:64px;border-radius:16px;display:flex;align-items:center;
+  justify-content:center;margin-bottom:24px;
+}
+.app-card.chatly .app-icon{background:var(--accent-light)}
+.app-card.compluto .app-icon{background:#fff0e8}
+[data-theme="dark"] .app-card.compluto .app-icon{background:#2a1a10}
+.app-card h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700;margin-bottom:10px}
+.app-card p{color:var(--text2);font-size:.95rem;line-height:1.6;margin-bottom:24px}
+.app-card-badge {
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:99px;font-size:.78rem;font-weight:600;background:var(--surface2);
+  color:var(--text2);border:1px solid var(--border);
+}
+.app-card-arrow {
+  position:absolute;top:28px;right:28px;width:32px;height:32px;
+  border-radius:50%;background:var(--surface2);display:flex;align-items:center;
+  justify-content:center;transition:var(--transition);
+}
+.app-card:hover .app-card-arrow{background:var(--accent);color:#fff;transform:translate(2px,-2px)}
+
+/* ─── AUTH PAGE ─── */
+#page-auth {
+  display:none;align-items:center;justify-content:center;
+  min-height:calc(100vh - var(--header-h));padding:40px 20px;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-light), transparent 70%);
+}
+#page-auth.active{display:flex}
+.auth-card {
+  background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  padding:48px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);
+  animation:fadeUp .5s cubic-bezier(.22,1,.36,1);
+}
+.auth-logo{text-align:center;margin-bottom:32px}
+.auth-logo svg{width:48px;height:48px}
+.auth-logo h2{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-top:12px}
+.auth-logo p{color:var(--text2);font-size:.9rem;margin-top:4px}
+.auth-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:28px;gap:4px}
+.auth-tab {
+  flex:1;padding:8px;border-radius:6px;font-size:.875rem;font-weight:500;
+  color:var(--text2);transition:var(--transition);text-align:center;
+}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.02em;text-transform:uppercase}
+.form-input {
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--surface2);color:var(--text);font-size:.95rem;transition:var(--transition);
+  outline:none;
+}
+.form-input:focus{border-color:var(--accent);background:var(--surface)}
+.form-input::placeholder{color:var(--text3)}
+.form-error{font-size:.8rem;color:var(--red);margin-top:5px;display:none}
+.auth-divider {
+  display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:.85rem;
+}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-look {
+  width:100%;padding:11px;border-radius:var(--radius-sm);border:1.5px solid var(--border);
+  background:transparent;color:var(--text2);font-size:.9rem;font-weight:500;
+  transition:var(--transition);text-align:center;display:block;
+}
+.btn-look:hover{background:var(--surface2);color:var(--text)}
+.btn-full{width:100%;padding:12px;font-size:.95rem}
+
+/* ─── SETTINGS PAGE ─── */
+#page-settings{display:none;flex-direction:row;min-height:calc(100vh - var(--header-h))}
+#page-settings.active{display:flex}
+.settings-sidebar {
+  width:240px;flex-shrink:0;padding:32px 16px;border-right:1px solid var(--border);
+  background:var(--surface);
+}
+.settings-sidebar h3 {
+  font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);padding:0 12px;margin-bottom:8px;margin-top:20px;
+}
+.settings-sidebar h3:first-child{margin-top:0}
+.settings-nav-item {
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);
+  font-size:.9rem;font-weight:500;color:var(--text2);transition:var(--transition);cursor:pointer;
+}
+.settings-nav-item svg{width:18px;height:18px;flex-shrink:0}
+.settings-nav-item:hover{background:var(--surface2);color:var(--text)}
+.settings-nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.settings-content{flex:1;padding:40px 48px;overflow-y:auto;max-width:720px}
+.settings-content h2{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.settings-content .page-sub{color:var(--text2);margin-bottom:36px;font-size:.95rem}
+.settings-section {display:none}
+.settings-section.active{display:block}
+.setting-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.setting-card h4{font-weight:600;margin-bottom:4px;font-size:.95rem}
+.setting-card p{color:var(--text2);font-size:.85rem;margin-bottom:16px;line-height:1.5}
+.setting-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+
+/* profile avatar editor */
+.profile-avatar-edit{position:relative;display:inline-block;cursor:pointer}
+.profile-avatar-edit .avatar{width:72px;height:72px;font-size:1.4rem}
+.avatar-edit-overlay {
+  position:absolute;inset:0;background:rgba(0,0,0,.4);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:var(--transition);
+}
+.profile-avatar-edit:hover .avatar-edit-overlay{opacity:1}
+
+/* toggle */
+.toggle-wrap{display:flex;align-items:center;gap:10px;margin-top:12px}
+.toggle {
+  position:relative;width:44px;height:24px;border-radius:99px;
+  background:var(--border);transition:var(--transition);cursor:pointer;flex-shrink:0;
+}
+.toggle.on{background:var(--accent)}
+.toggle::after {
+  content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;
+  border-radius:50%;background:#fff;transition:var(--transition);box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.toggle.on::after{transform:translateX(20px)}
+.toggle-label{font-size:.9rem;color:var(--text2)}
+
+/* ─── CHATLY ─── */
+#page-chatly{display:none;height:calc(100vh - var(--header-h))}
+#page-chatly.active{display:flex}
+.chatly-servers {
+  width:72px;background:var(--surface2);border-right:1px solid var(--border);
+  padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:8px;overflow-y:auto;
+}
+.server-icon {
+  width:48px;height:48px;border-radius:50%;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:var(--transition);font-size:.7rem;font-weight:700;position:relative;
+  color:var(--text2);font-family:var(--font-display);overflow:hidden;
+  border:2px solid transparent;
+}
+.server-icon:hover,.server-icon.active{border-radius:14px;border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.server-icon.global-icon{background:var(--accent);color:#fff;border-color:var(--accent)}
+.server-add-btn {
+  width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:var(--transition);color:var(--text3);
+}
+.server-add-btn:hover{border-color:var(--accent);color:var(--accent);border-radius:14px}
+.chatly-channels {
+  width:220px;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.channels-header {
+  padding:16px;border-bottom:1px solid var(--border);font-family:var(--font-display);
+  font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;
+}
+.channel-list{flex:1;overflow-y:auto;padding:8px}
+.channel-group-header {
+  font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);padding:8px 8px 4px;display:flex;align-items:center;justify-content:space-between;
+}
+.channel-item {
+  display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:var(--transition);font-size:.9rem;color:var(--text2);
+}
+.channel-item:hover{background:var(--surface2);color:var(--text)}
+.channel-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
+.channel-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.chat-top {
+  padding:12px 20px;border-bottom:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.chat-top h3{font-weight:600;font-size:.95rem}
+.chat-top span{color:var(--text3);font-size:.8rem;margin-left:auto}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:4px}
+.chat-day-divider {
+  display:flex;align-items:center;gap:12px;margin:12px 0;color:var(--text3);font-size:.78rem;font-weight:500;
+}
+.chat-day-divider::before,.chat-day-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.msg {display:flex;gap:12px;padding:6px 4px;border-radius:var(--radius-sm);transition:var(--transition)}
+.msg:hover{background:var(--surface2)}
+.msg-avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.msg-body{flex:1;min-width:0}
+.msg-meta{display:flex;align-items:baseline;gap:10px;margin-bottom:3px}
+.msg-name{font-weight:600;font-size:.9rem}
+.msg-time{font-size:.75rem;color:var(--text3)}
+.msg-content{font-size:.925rem;line-height:1.55;word-break:break-word;color:var(--text)}
+.msg-file {
+  display:inline-flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  margin-top:6px;max-width:320px;cursor:pointer;transition:var(--transition);
+}
+.msg-file:hover{border-color:var(--accent);background:var(--accent-light)}
+.msg-file-info{flex:1;min-width:0}
+.msg-file-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-file-size{font-size:.75rem;color:var(--text3)}
+.msg-img{max-width:320px;border-radius:var(--radius-sm);margin-top:6px;display:block;cursor:pointer}
+.chat-input-wrap {
+  padding:16px 20px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;
+}
+.chat-input-box {
+  display:flex;align-items:flex-end;gap:10px;background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 14px;
+  transition:var(--transition);
+}
+.chat-input-box:focus-within{border-color:var(--accent);background:var(--surface)}
+.chat-input {
+  flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.95rem;
+  resize:none;max-height:120px;min-height:24px;line-height:1.5;font-family:var(--font);
+}
+.chat-input::placeholder{color:var(--text3)}
+.chat-attach-btn,.chat-send-btn {
+  width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;
+  justify-content:center;transition:var(--transition);flex-shrink:0;color:var(--text2);
+}
+.chat-attach-btn:hover{background:var(--border);color:var(--text)}
+.chat-send-btn{background:var(--accent);color:#fff}
+.chat-send-btn:hover{opacity:.85}
+.members-panel {
+  width:200px;border-left:1px solid var(--border);background:var(--surface);
+  padding:16px;overflow-y:auto;flex-shrink:0;display:none;
+}
+.members-panel.visible{display:block}
+.members-panel h4{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.member-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.875rem}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* ─── COMPLUTO ─── */
+#page-compluto{display:none;height:calc(100vh - var(--header-h))}
+#page-compluto.active{display:flex}
+.compluto-sidebar {
+  width:220px;background:var(--surface);border-right:1px solid var(--border);
+  padding:16px;overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;gap:4px;
+}
+.compluto-sidebar h4{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:8px 8px 4px;margin-top:8px}
+.compluto-sidebar h4:first-child{margin-top:0}
+.sidebar-nav-item {
+  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);
+  font-size:.875rem;font-weight:500;color:var(--text2);cursor:pointer;transition:var(--transition);
+}
+.sidebar-nav-item svg{width:17px;height:17px;flex-shrink:0}
+.sidebar-nav-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-nav-item.active{background:var(--accent-light);color:var(--accent)}
+.compluto-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.compluto-toolbar {
+  padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;
+}
+.compluto-toolbar h3{font-family:var(--font-display);font-size:1rem;font-weight:700}
+.breadcrumb{display:flex;align-items:center;gap:4px;font-size:.85rem;color:var(--text2)}
+.breadcrumb span{cursor:pointer;transition:var(--transition)}
+.breadcrumb span:hover{color:var(--text)}
+.breadcrumb .sep{color:var(--text3)}
+.btn-toolbar {
+  display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);
+  font-size:.82rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);transition:var(--transition);
+}
+.btn-toolbar:hover{background:var(--border)}
+.btn-toolbar.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-toolbar.primary:hover{opacity:.85}
+.btn-toolbar svg{width:15px;height:15px}
+.compluto-search{
+  flex:1;display:flex;align-items:center;gap:8px;background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;max-width:280px;
+}
+.compluto-search input{flex:1;background:none;border:none;outline:none;font-size:.875rem;color:var(--text);font-family:var(--font)}
+.compluto-search input::placeholder{color:var(--text3)}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.view-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:var(--transition)}
+.view-btn:hover,.view-btn.active{background:var(--surface2);color:var(--text)}
+.compluto-content{flex:1;overflow-y:auto;padding:24px}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
+.file-list{display:flex;flex-direction:column;gap:2px}
+.file-item-grid {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:16px;cursor:pointer;transition:var(--transition);text-align:center;position:relative;
+}
+.file-item-grid:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.file-item-grid.selected{border-color:var(--accent);background:var(--accent-light)}
+.file-item-grid .file-icon{width:48px;height:48px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;border-radius:10px}
+.file-item-grid .file-name{font-size:.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
+.file-item-grid .file-meta{font-size:.7rem;color:var(--text3)}
+.file-item-list {
+  display:flex;align-items:center;gap:14px;padding:9px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:var(--transition);border:1px solid transparent;
+}
+.file-item-list:hover{background:var(--surface);border-color:var(--border)}
+.file-item-list.selected{background:var(--accent-light);border-color:var(--accent)}
+.file-item-list .file-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0}
+.file-item-list .file-name{flex:1;font-size:.875rem;font-weight:500}
+.file-item-list .file-meta{font-size:.8rem;color:var(--text3);text-align:right}
+.empty-state{text-align:center;padding:80px 20px;color:var(--text2)}
+.empty-state svg{width:64px;height:64px;opacity:.3;margin-bottom:16px}
+.empty-state h4{font-size:1rem;font-weight:600;margin-bottom:6px}
+.empty-state p{font-size:.875rem}
+/* context menu */
+.ctx-menu {
+  position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:6px;box-shadow:var(--shadow-lg);z-index:999;min-width:160px;display:none;
+}
+.ctx-item {
+  display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;
+  font-size:.875rem;cursor:pointer;transition:var(--transition);color:var(--text);
+}
+.ctx-item:hover{background:var(--surface2)}
+.ctx-item.danger{color:var(--red)}
+.ctx-item.danger:hover{background:var(--red-light)}
+.ctx-divider{height:1px;background:var(--border);margin:4px 0}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex}
+.modal {
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:32px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);
+  animation:zoomIn .25s cubic-bezier(.22,1,.36,1);
+}
+.modal h3{font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--text2);font-size:.9rem;line-height:1.5;margin-bottom:24px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+/* ─── TOAST ─── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast {
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px 18px;font-size:.875rem;box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:10px;max-width:320px;
+  animation:slideIn .3s cubic-bezier(.22,1,.36,1);
+}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--accent)}
+
+/* ─── DROPDOWN ─── */
+.dropdown{position:relative;display:inline-block}
+.dropdown-menu {
+  position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  min-width:180px;z-index:150;display:none;padding:6px;
+  animation:fadeDown .2s cubic-bezier(.22,1,.36,1);
+}
+.dropdown-menu.open{display:block}
+.dropdown-item {
+  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);
+  font-size:.875rem;cursor:pointer;transition:var(--transition);color:var(--text);
+}
+.dropdown-item:hover{background:var(--surface2)}
+.dropdown-item.danger{color:var(--red)}
+.dropdown-item svg{width:16px;height:16px;opacity:.7}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0}
+.dropdown-label{padding:6px 12px;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+
+/* ─── ADD SERVER MODAL ─── */
+.code-input {
+  display:flex;gap:8px;justify-content:center;margin:20px 0;
+}
+.code-digit {
+  width:44px;height:52px;border:2px solid var(--border);border-radius:var(--radius-sm);
+  text-align:center;font-size:1.4rem;font-family:var(--font-display);font-weight:700;
+  background:var(--surface2);color:var(--text);outline:none;transition:var(--transition);
+}
+.code-digit:focus{border-color:var(--accent);background:var(--surface)}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes zoomIn {
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes fadeDown {
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes slideIn {
+  from{opacity:0;transform:translateX(24px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes slideOut {
+  to{opacity:0;transform:translateX(24px)}
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  .chatly-channels{display:none}
+  .chatly-channels.mobile-open{display:flex;position:fixed;top:var(--header-h);left:72px;bottom:0;z-index:50;width:220px}
+  .members-panel{display:none!important}
+  .compluto-sidebar{display:none}
+  .compluto-sidebar.mobile-open{display:flex;position:fixed;top:var(--header-h);left:0;bottom:0;z-index:50;width:220px}
+  .settings-sidebar{display:none}
+  .settings-sidebar.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:var(--header-h);left:0;bottom:0;z-index:50;width:240px;box-shadow:var(--shadow-lg)}
+  .settings-content{padding:24px 20px}
+  .auth-card{padding:32px 24px}
+  #header{padding:0 16px}
+  .home-hero{margin-bottom:48px}
+  #page-home{padding:40px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header id="header">
+  <div class="header-logo" onclick="goHome()">
+    <svg viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="var(--accent)"/>
+      <path d="M8 16L14 22L24 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Nexus
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-nav">
+    <button class="btn-icon" title="Settings" onclick="openSettings()" id="settings-btn" style="display:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </button>
+    <div id="header-auth">
+      <button class="btn-primary" onclick="showAuth()">Login</button>
+    </div>
+    <div id="header-user" style="display:none" class="dropdown">
+      <div class="avatar" id="header-avatar" onclick="toggleUserMenu()">N</div>
+      <div class="dropdown-menu" id="user-dropdown">
+        <div class="dropdown-label" id="dd-username">Username</div>
+        <div class="dropdown-item" onclick="openSettings()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          Settings
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item danger" onclick="logout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ─── HOME PAGE ─── -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <h1>Your workspace,<br><span>all in one place</span></h1>
+    <p>Chat with your team, manage files, and stay organised — all inside Nexus, your personal digital platform.</p>
+  </div>
+  <div class="home-apps">
+    <div class="app-card chatly" onclick="openApp('chatly')">
+      <div class="app-card-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="app-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <h2>Chatly</h2>
+      <p>Real-time messaging with servers, channels, and file sharing. Connect with anyone on Nexus.</p>
+      <span class="app-card-badge">
+        <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="var(--green)"/></svg>
+        Live
+      </span>
+    </div>
+    <div class="app-card compluto" onclick="openApp('compluto')">
+      <div class="app-card-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="app-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <h2>ComPluto</h2>
+      <p>Your personal cloud file manager. Create folders, upload files, and access from any device.</p>
+      <span class="app-card-badge">
+        <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="var(--accent2)"/></svg>
+        Storage
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUTH PAGE ─── -->
+<div class="page" id="page-auth" style="display:none;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:40px 20px;background:radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-light), transparent 70%)">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="var(--accent)"/>
+        <path d="M12 24L21 33L36 15" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h2>Welcome to Nexus</h2>
+      <p>Sign in to your workspace</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Create Account</div>
+    </div>
+    <!-- LOGIN FORM -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="login-username" type="text" placeholder="Enter your username" autocomplete="username">
+        <div class="form-error" id="login-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-password" type="password" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <button class="btn-primary btn-full" onclick="doLogin()" style="margin-top:4px">Sign In</button>
+      <div class="auth-divider">or</div>
+      <button class="btn-look" onclick="guestMode()">I'll just look around</button>
+    </div>
+    <!-- REGISTER FORM -->
+    <div id="form-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="reg-username" type="text" placeholder="Choose a username" autocomplete="username">
+        <div class="form-error" id="reg-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input class="form-input" id="reg-display" type="text" placeholder="Your display name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-password" type="password" placeholder="Create a password" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input class="form-input" id="reg-confirm" type="password" placeholder="Confirm password">
+        <div class="form-error" id="reg-err2"></div>
+      </div>
+      <button class="btn-primary btn-full" onclick="doRegister()" style="margin-top:4px">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SETTINGS PAGE ─── -->
+<div class="page" id="page-settings" style="display:none;flex-direction:row;min-height:calc(100vh - 64px)">
+  <aside class="settings-sidebar">
+    <h3>Personalization</h3>
+    <div class="settings-nav-item active" data-section="profile" onclick="switchSettingsSection('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Profile
+    </div>
+    <div class="settings-nav-item" data-section="appearance" onclick="switchSettingsSection('appearance')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Appearance
+    </div>
+    <div class="settings-nav-item" data-section="notifications" onclick="switchSettingsSection('notifications')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+    </div>
+    <h3>Privacy &amp; Security</h3>
+    <div class="settings-nav-item" data-section="password" onclick="switchSettingsSection('password')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Password
+    </div>
+    <div class="settings-nav-item" data-section="recovery" onclick="switchSettingsSection('recovery')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Recovery Email
+    </div>
+    <div style="margin-top:auto;padding-top:24px;border-top:1px solid var(--border)">
+      <div class="settings-nav-item danger" style="color:var(--red)" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </div>
+    </div>
+  </aside>
+  <div class="settings-content">
+    <!-- PROFILE -->
+    <div class="settings-section active" id="section-profile">
+      <h2>Profile</h2>
+      <p class="page-sub">Manage your public profile information</p>
+      <div class="setting-card">
+        <h4>Profile Photo</h4>
+        <p>Your avatar is shown across Nexus. Click to change it.</p>
+        <div class="profile-avatar-edit" onclick="document.getElementById('avatar-upload').click()">
+          <div class="avatar" id="settings-avatar" style="width:72px;height:72px;font-size:1.4rem">N</div>
+          <div class="avatar-edit-overlay">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+        </div>
+        <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
+      </div>
+      <div class="setting-card">
+        <h4>Username</h4>
+        <p>Can only be changed once per week.</p>
+        <div class="setting-row">
+          <input class="form-input" id="s-username" type="text" style="max-width:280px" placeholder="Username">
+          <button class="btn-secondary" onclick="saveUsername()">Save</button>
+        </div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:8px" id="username-cooldown"></div>
+      </div>
+      <div class="setting-card">
+        <h4>Display Name</h4>
+        <p>Can be changed once per day.</p>
+        <div class="setting-row">
+          <input class="form-input" id="s-displayname" type="text" style="max-width:280px" placeholder="Display name">
+          <button class="btn-secondary" onclick="saveDisplayName()">Save</button>
+        </div>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:8px" id="displayname-cooldown"></div>
+      </div>
+    </div>
+    <!-- APPEARANCE -->
+    <div class="settings-section" id="section-appearance">
+      <h2>Appearance</h2>
+      <p class="page-sub">Customise how Nexus looks for you</p>
+      <div class="setting-card">
+        <h4>Theme</h4>
+        <p>Choose between light and dark mode. The platform default is clean white.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+          <div id="theme-light" onclick="setTheme('light')" style="border:2px solid var(--border);border-radius:12px;padding:16px 24px;cursor:pointer;transition:var(--transition);text-align:center">
+            <div style="width:48px;height:32px;background:#f8f7f4;border-radius:6px;border:1px solid #e5e2dc;margin:0 auto 8px"></div>
+            <div style="font-size:.82rem;font-weight:600">Light</div>
+          </div>
+          <div id="theme-dark" onclick="setTheme('dark')" style="border:2px solid var(--border);border-radius:12px;padding:16px 24px;cursor:pointer;transition:var(--transition);text-align:center">
+            <div style="width:48px;height:32px;background:#111110;border-radius:6px;border:1px solid #2e2c28;margin:0 auto 8px"></div>
+            <div style="font-size:.82rem;font-weight:600">Dark</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- NOTIFICATIONS -->
+    <div class="settings-section" id="section-notifications">
+      <h2>Notifications</h2>
+      <p class="page-sub">Manage how Nexus contacts you</p>
+      <div class="setting-card">
+        <h4>Tag Notifications</h4>
+        <p>Receive an email when someone mentions you in a message. Requires a recovery email to be set.</p>
+        <div class="toggle-wrap">
+          <div class="toggle" id="notif-toggle" onclick="toggleNotif()"></div>
+          <span class="toggle-label">Email me when I'm tagged</span>
+        </div>
+      </div>
+    </div>
+    <!-- PASSWORD -->
+    <div class="settings-section" id="section-password">
+      <h2>Password</h2>
+      <p class="page-sub">Keep your account secure with a strong password</p>
+      <div class="setting-card">
+        <h4>Change Password</h4>
+        <p>Enter your current password, then choose a new one.</p>
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input class="form-input" id="pw-current" type="password" placeholder="Current password" style="max-width:320px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input class="form-input" id="pw-new" type="password" placeholder="New password" style="max-width:320px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input class="form-input" id="pw-confirm" type="password" placeholder="Confirm new password" style="max-width:320px">
+          <div class="form-error" id="pw-err"></div>
+        </div>
+        <button class="btn-primary" onclick="changePassword()">Update Password</button>
+      </div>
+    </div>
+    <!-- RECOVERY EMAIL -->
+    <div class="settings-section" id="section-recovery">
+      <h2>Recovery Email</h2>
+      <p class="page-sub">Add an email to recover your account and receive tag notifications</p>
+      <div class="setting-card" id="recovery-card">
+        <h4>Recovery Email</h4>
+        <p>This email is used to recover your account if you forget your password, and for tag notifications.</p>
+        <div id="recovery-current" style="display:none;margin-bottom:16px;padding:12px 16px;background:var(--green-light);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span style="font-size:.875rem;font-weight:500;color:var(--green)" id="recovery-email-display"></span>
+          <button onclick="removeRecoveryEmail()" style="margin-left:auto;font-size:.78rem;color:var(--red);font-weight:600;padding:4px 8px;border-radius:4px;background:var(--red-light)" >Remove</button>
+        </div>
+        <div id="recovery-add">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" id="recovery-input" type="email" placeholder="your@email.com" style="max-width:320px">
+            <div class="form-error" id="recovery-err"></div>
+          </div>
+          <div id="recovery-verify-wrap" style="display:none">
+            <p style="font-size:.875rem;color:var(--text2);margin-bottom:12px">
+              A 6-digit code was sent to your email. Enter it below to verify.
+            </p>
+            <div class="code-input" id="code-inputs">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,0)">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,1)">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,2)">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,3)">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,4)">
+              <input class="code-digit" maxlength="1" type="text" oninput="codeNav(this,5)">
+            </div>
+            <button class="btn-primary" onclick="verifyCode()" style="margin-top:4px">Verify Email</button>
+            <button class="btn-secondary" onclick="cancelEmailVerify()" style="margin-left:8px;margin-top:4px">Cancel</button>
+          </div>
+          <div id="recovery-send-wrap">
+            <button class="btn-primary" onclick="sendVerifyCode()">Send Verification Code</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CHATLY PAGE ─── -->
+<div class="page" id="page-chatly" style="display:none;height:calc(100vh - 64px)">
+  <div style="display:flex;height:100%">
+    <!-- Servers sidebar -->
+    <div class="chatly-servers" id="chatly-servers">
+      <div class="server-icon global-icon active" id="server-global" title="Global" onclick="selectServer('global')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div style="width:36px;height:1px;background:var(--border);margin:4px 0"></div>
+      <div id="server-list"></div>
+      <div class="server-add-btn" title="Add Server" onclick="showAddServer()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+    <!-- Channels -->
+    <div class="chatly-channels" id="chatly-channels">
+      <div class="channels-header">
+        <span id="channel-server-name">Global</span>
+      </div>
+      <div class="channel-list" id="channel-list"></div>
+    </div>
+    <!-- Chat main -->
+    <div class="chat-main" id="chat-main">
+      <div class="chat-top">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <h3 id="chat-channel-name">general</h3>
+        <span id="chat-online-count">0 online</span>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div style="text-align:center;padding:40px 20px;color:var(--text2)">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3;margin-bottom:12px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div style="font-size:.9rem">Start the conversation</div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input-box">
+          <button class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" title="Attach file">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <input type="file" id="chat-file-input" style="display:none" multiple onchange="attachFiles(event)">
+          <textarea class="chat-input" id="chat-input" placeholder="Send a message..." rows="1" onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+          <button class="chat-send-btn" onclick="sendMessage()" title="Send">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <div id="attached-files-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+    </div>
+    <!-- Members -->
+    <div class="members-panel visible" id="members-panel">
+      <h4>Online</h4>
+      <div id="members-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── COMPLUTO PAGE ─── -->
+<div class="page" id="page-compluto" style="display:none;height:calc(100vh - 64px)">
+  <div style="display:flex;height:100%">
+    <aside class="compluto-sidebar">
+      <div class="sidebar-nav-item active" id="nav-all" onclick="complutoNav('all')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        All Files
+      </div>
+      <div class="sidebar-nav-item" id="nav-recent" onclick="complutoNav('recent')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Recent
+      </div>
+      <div class="sidebar-nav-item" id="nav-images" onclick="complutoNav('images')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Images
+      </div>
+      <div class="sidebar-nav-item" id="nav-videos" onclick="complutoNav('videos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg>
+        Videos
+      </div>
+      <div class="sidebar-nav-item" id="nav-docs" onclick="complutoNav('docs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documents
+      </div>
+      <h4>Storage</h4>
+      <div style="padding:8px 10px">
+        <div style="height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-bottom:6px">
+          <div id="storage-bar" style="height:100%;border-radius:99px;background:var(--accent);width:0%;transition:width .5s"></div>
+        </div>
+        <div style="font-size:.75rem;color:var(--text3)" id="storage-label">0 MB used</div>
+      </div>
+    </aside>
+    <div class="compluto-main">
+      <div class="compluto-toolbar">
+        <div class="breadcrumb" id="breadcrumb">
+          <span onclick="complutoNav('all')">All Files</span>
+        </div>
+        <div style="flex:1"></div>
+        <div class="compluto-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="compluto-search" placeholder="Search files..." oninput="complutoSearch(this.value)">
+        </div>
+        <button class="btn-toolbar" onclick="createFolder()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          New Folder
+        </button>
+        <button class="btn-toolbar primary" onclick="document.getElementById('compluto-upload').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Upload
+        </button>
+        <input type="file" id="compluto-upload" style="display:none" multiple onchange="complutoUpload(event)">
+        <div class="view-toggle">
+          <button class="view-btn active" id="vb-grid" onclick="setView('grid')" title="Grid view">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </button>
+          <button class="view-btn" id="vb-list" onclick="setView('list')" title="List view">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="compluto-content" id="compluto-content">
+        <div class="file-grid" id="file-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODALS ─── -->
+<!-- Guest Warning -->
+<div class="modal-overlay" id="modal-guest">
+  <div class="modal" style="text-align:center">
+    <div style="width:64px;height:64px;background:var(--accent-light);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <h3>Sure you won't log in?</h3>
+    <p>You can't do anything else than look without logging in. Create a free account to send messages, store files, and more.</p>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn-secondary" onclick="closeModal('modal-guest')">Stay as Guest</button>
+      <button class="btn-primary" onclick="closeModal('modal-guest');showAuth()">Create Account</button>
+    </div>
+  </div>
+</div>
+<!-- Add Server -->
+<div class="modal-overlay" id="modal-addserver">
+  <div class="modal">
+    <h3>Join or Create a Server</h3>
+    <p>Enter the invite code to join a private server, or create your own server space.</p>
+    <div class="form-group">
+      <label class="form-label">Server Name</label>
+      <input class="form-input" id="server-name-input" type="text" placeholder="My Server">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Invite Code <span style="color:var(--text3);font-weight:400">(optional — e.g. Bacon!)</span></label>
+      <input class="form-input" id="server-code-input" type="text" placeholder="Enter code to join existing server">
+      <div class="form-error" id="server-err"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-addserver')">Cancel</button>
+      <button class="btn-primary" onclick="joinOrCreateServer()">Continue</button>
+    </div>
+  </div>
+</div>
+<!-- Image Lightbox -->
+<div class="modal-overlay" id="modal-image" onclick="closeModal('modal-image')" style="background:rgba(0,0,0,.85)">
+  <img id="lightbox-img" src="" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain">
+</div>
+<!-- Rename/New Folder -->
+<div class="modal-overlay" id="modal-prompt">
+  <div class="modal">
+    <h3 id="prompt-title">New Folder</h3>
+    <p id="prompt-desc">Enter a name for the new folder.</p>
+    <div class="form-group">
+      <input class="form-input" id="prompt-input" type="text" placeholder="Folder name">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-prompt')">Cancel</button>
+      <button class="btn-primary" onclick="promptConfirm()">Confirm</button>
+    </div>
+  </div>
+</div>
+<!-- Context Menu -->
+<div class="ctx-menu" id="ctx-menu">
+  <div class="ctx-item" id="ctx-open" onclick="ctxAction('open')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    Open
+  </div>
+  <div class="ctx-item" id="ctx-download" onclick="ctxAction('download')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download
+  </div>
+  <div class="ctx-item" onclick="ctxAction('rename')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Rename
+  </div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item danger" onclick="ctxAction('delete')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    Delete
+  </div>
+</div>
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  NEXUS PLATFORM — Core Application
+// ════════════════════════════════════════════════════════
+
+const DB = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem('nexus_'+k)) } catch(e) { return null } },
+  set: (k,v) => localStorage.setItem('nexus_'+k, JSON.stringify(v)),
+  del: (k) => localStorage.removeItem('nexus_'+k)
+}
+
+// ── APP STATE ──
+let state = {
+  currentUser: null,
+  isGuest: false,
+  currentPage: 'home',
+  theme: 'light',
+  // chatly
+  currentServerId: 'global',
+  currentChannelId: 'general',
+  attachedFiles: [],
+  // compluto
+  currentFolderId: null,
+  complutoView: 'grid',
+  complutoFilter: 'all',
+  selectedFiles: new Set(),
+  ctxTargetId: null,
+  promptCallback: null,
+  // settings
+  currentSettingsSection: 'profile',
+  pendingVerifyCode: null,
+  pendingVerifyEmail: null,
+}
+
+// ── INITIAL DATA ──
+function initData() {
+  if (!DB.get('users')) DB.set('users', [])
+  if (!DB.get('servers')) DB.set('servers', [
+    { id:'global', name:'Global', code:'PUBLIC', channels:[
+      { id:'general', name:'general', messages:[] },
+      { id:'announcements', name:'announcements', messages:[] },
+      { id:'random', name:'random', messages:[] },
+    ]}
+  ])
+  if (!DB.get('compluto_files')) DB.set('compluto_files', {})
+}
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.display = 'none'
+    p.classList.remove('active')
+  })
+  const pg = document.getElementById('page-'+id)
+  if (!pg) return
+  state.currentPage = id
+  if (id === 'auth') {
+    pg.style.display = 'flex'
+  } else if (id === 'settings') {
+    pg.style.display = 'flex'
+  } else if (['chatly','compluto'].includes(id)) {
+    pg.style.display = 'flex'
+  } else {
+    pg.style.display = 'block'
+  }
+  pg.classList.add('active')
+  document.getElementById('settings-btn').style.display = state.currentUser ? 'flex' : 'none'
+}
+
+function goHome() { showPage('home') }
+
+function openSettings() {
+  if (!state.currentUser) { requireLogin(); return }
+  populateSettings()
+  showPage('settings')
+  closeDropdowns()
+}
+
+function openApp(app) {
+  if (!state.currentUser) {
+    state.isGuest = true
+    openModal('modal-guest')
+    return
+  }
+  if (app === 'chatly') { initChatly(); showPage('chatly') }
+  if (app === 'compluto') { initCompluto(); showPage('compluto') }
+}
+
+// ── AUTH ──
+function showAuth() { showPage('auth'); closeDropdowns() }
+
+function switchTab(tab) {
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none'
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none'
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login')
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register')
+}
+
+function doLogin() {
+  const username = document.getElementById('login-username').value.trim()
+  const password = document.getElementById('login-password').value
+  const err = document.getElementById('login-err')
+  err.style.display = 'none'
+  if (!username || !password) { showErr(err, 'Please fill in all fields'); return }
+  const users = DB.get('users') || []
+  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === btoa(password))
+  if (!user) { showErr(err, 'Invalid username or password'); return }
+  loginUser(user)
+}
+
+function doRegister() {
+  const username = document.getElementById('reg-username').value.trim()
+  const display = document.getElementById('reg-display').value.trim()
+  const password = document.getElementById('reg-password').value
+  const confirm = document.getElementById('reg-confirm').value
+  const err = document.getElementById('reg-err')
+  const err2 = document.getElementById('reg-err2')
+  err.style.display = err2.style.display = 'none'
+  if (!username || !password) { showErr(err, 'Username and password are required'); return }
+  if (username.length < 3) { showErr(err, 'Username must be at least 3 characters'); return }
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) { showErr(err, 'Only letters, numbers, and underscores'); return }
+  if (password !== confirm) { showErr(err2, 'Passwords do not match'); return }
+  if (password.length < 6) { showErr(err2, 'Password must be at least 6 characters'); return }
+  const users = DB.get('users') || []
+  if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+    showErr(err, 'Username already taken'); return
+  }
+  const user = {
+    id: Date.now().toString(),
+    username, password: btoa(password),
+    displayName: display || username,
+    avatar: null,
+    theme: 'light',
+    notifTags: false,
+    recoveryEmail: null,
+    recoveryEmailVerified: false,
+    lastUsernameChange: 0,
+    lastDisplayNameChange: 0,
+    createdAt: Date.now()
+  }
+  users.push(user)
+  DB.set('users', users)
+  loginUser(user)
+  showToast('Account created! Welcome to Nexus.', 'success')
+}
+
+function loginUser(user) {
+  state.currentUser = user
+  state.isGuest = false
+  DB.set('session', user.id)
+  updateHeader()
+  setTheme(user.theme || 'light')
+  showPage('home')
+}
+
+function logout() {
+  state.currentUser = null
+  state.isGuest = false
+  DB.del('session')
+  updateHeader()
+  closeDropdowns()
+  showPage('home')
+  showToast('Signed out successfully', 'info')
+}
+
+function guestMode() {
+  state.isGuest = true
+  state.currentUser = null
+  showPage('home')
+}
+
+function requireLogin() {
+  openModal('modal-guest')
+}
+
+function updateHeader() {
+  const authDiv = document.getElementById('header-auth')
+  const userDiv = document.getElementById('header-user')
+  const settingsBtn = document.getElementById('settings-btn')
+  if (state.currentUser) {
+    authDiv.style.display = 'none'
+    userDiv.style.display = 'block'
+    settingsBtn.style.display = 'flex'
+    renderAvatar(document.getElementById('header-avatar'), state.currentUser)
+    document.getElementById('dd-username').textContent = state.currentUser.username
+  } else {
+    authDiv.style.display = 'block'
+    userDiv.style.display = 'none'
+    settingsBtn.style.display = 'none'
+  }
+}
+
+function renderAvatar(el, user) {
+  if (user.avatar) {
+    el.innerHTML = `<img src="${user.avatar}" alt="">`
+    el.style.background = 'var(--accent)'
+  } else {
+    el.textContent = (user.displayName || user.username)[0].toUpperCase()
+    el.style.background = strColor(user.id)
+  }
+}
+
+function strColor(str) {
+  const colors = ['#1c4fd8','#7c3aed','#db2777','#ea580c','#16a34a','#0891b2','#9333ea']
+  let h = 0; for (let c of str) h = (h*31 + c.charCodeAt(0)) % colors.length
+  return colors[h]
+}
+
+function toggleUserMenu() {
+  const dd = document.getElementById('user-dropdown')
+  dd.classList.toggle('open')
+}
+
+function closeDropdowns() {
+  document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('open'))
+}
+
+// ── THEME ──
+function setTheme(t) {
+  state.theme = t
+  document.documentElement.setAttribute('data-theme', t)
+  if (state.currentUser) {
+    const users = DB.get('users') || []
+    const idx = users.findIndex(u => u.id === state.currentUser.id)
+    if (idx !== -1) { users[idx].theme = t; DB.set('users', users); state.currentUser = users[idx] }
+  }
+  document.getElementById('theme-light').style.borderColor = t === 'light' ? 'var(--accent)' : 'var(--border)'
+  document.getElementById('theme-dark').style.borderColor = t === 'dark' ? 'var(--accent)' : 'var(--border)'
+}
+
+// ── SETTINGS ──
+function switchSettingsSection(sec) {
+  state.currentSettingsSection = sec
+  document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.toggle('active', i.dataset.section === sec))
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.toggle('active', s.id === 'section-'+sec))
+}
+
+function populateSettings() {
+  const u = state.currentUser
+  if (!u) return
+  // profile
+  document.getElementById('s-username').value = u.username
+  document.getElementById('s-displayname').value = u.displayName || u.username
+  renderAvatar(document.getElementById('settings-avatar'), u)
+  // username cooldown
+  const ucEl = document.getElementById('username-cooldown')
+  const uNext = u.lastUsernameChange + 7*24*60*60*1000
+  ucEl.textContent = Date.now() < uNext ? `Next change: ${new Date(uNext).toLocaleDateString()}` : 'Can be changed now'
+  // displayname cooldown
+  const dcEl = document.getElementById('displayname-cooldown')
+  const dNext = u.lastDisplayNameChange + 24*60*60*1000
+  dcEl.textContent = Date.now() < dNext ? `Next change: ${new Date(dNext).toLocaleString()}` : 'Can be changed now'
+  // theme
+  document.getElementById('theme-light').style.borderColor = state.theme === 'light' ? 'var(--accent)' : 'var(--border)'
+  document.getElementById('theme-dark').style.borderColor = state.theme === 'dark' ? 'var(--accent)' : 'var(--border)'
+  // notif toggle
+  const nt = document.getElementById('notif-toggle')
+  nt.classList.toggle('on', !!u.notifTags)
+  // recovery email
+  updateRecoveryEmailUI()
+}
+
+function saveUsername() {
+  const u = state.currentUser; if (!u) return
+  const val = document.getElementById('s-username').value.trim()
+  if (!val || val.length < 3) { showToast('Username too short', 'error'); return }
+  if (!/^[a-zA-Z0-9_]+$/.test(val)) { showToast('Only letters, numbers, underscores', 'error'); return }
+  if (Date.now() < u.lastUsernameChange + 7*24*60*60*1000) { showToast('Can only change username once a week', 'error'); return }
+  const users = DB.get('users') || []
+  if (users.find(x => x.id !== u.id && x.username.toLowerCase() === val.toLowerCase())) {
+    showToast('Username already taken', 'error'); return
+  }
+  const idx = users.findIndex(x => x.id === u.id)
+  users[idx].username = val; users[idx].lastUsernameChange = Date.now()
+  DB.set('users', users); state.currentUser = users[idx]
+  updateHeader(); populateSettings()
+  showToast('Username updated!', 'success')
+}
+
+function saveDisplayName() {
+  const u = state.currentUser; if (!u) return
+  const val = document.getElementById('s-displayname').value.trim()
+  if (!val) { showToast('Display name cannot be empty', 'error'); return }
+  if (Date.now() < u.lastDisplayNameChange + 24*60*60*1000) { showToast('Can only change display name once a day', 'error'); return }
+  const users = DB.get('users') || []
+  const idx = users.findIndex(x => x.id === u.id)
+  users[idx].displayName = val; users[idx].lastDisplayNameChange = Date.now()
+  DB.set('users', users); state.currentUser = users[idx]
+  updateHeader(); populateSettings()
+  showToast('Display name updated!', 'success')
+}
+
+function uploadAvatar(event) {
+  const file = event.target.files[0]; if (!file) return
+  if (!file.type.startsWith('image/')) { showToast('Please select an image', 'error'); return }
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const users = DB.get('users') || []
+    const idx = users.findIndex(x => x.id === state.currentUser.id)
+    users[idx].avatar = e.target.result
+    DB.set('users', users); state.currentUser = users[idx]
+    renderAvatar(document.getElementById('settings-avatar'), state.currentUser)
+    updateHeader()
+    showToast('Profile photo updated!', 'success')
+  }
+  reader.readAsDataURL(file)
+}
+
+function toggleNotif() {
+  const u = state.currentUser; if (!u) return
+  if (!u.recoveryEmail) { showToast('Add a recovery email first', 'error'); switchSettingsSection('recovery'); return }
+  const users = DB.get('users') || []
+  const idx = users.findIndex(x => x.id === u.id)
+  users[idx].notifTags = !users[idx].notifTags
+  DB.set('users', users); state.currentUser = users[idx]
+  document.getElementById('notif-toggle').classList.toggle('on', users[idx].notifTags)
+  showToast(users[idx].notifTags ? 'Tag notifications enabled' : 'Tag notifications disabled', 'info')
+}
+
+function changePassword() {
+  const u = state.currentUser; if (!u) return
+  const cur = document.getElementById('pw-current').value
+  const nw = document.getElementById('pw-new').value
+  const cnf = document.getElementById('pw-confirm').value
+  const err = document.getElementById('pw-err')
+  err.style.display = 'none'
+  if (btoa(cur) !== u.password) { showErr(err, 'Current password is incorrect'); return }
+  if (nw.length < 6) { showErr(err, 'Password must be at least 6 characters'); return }
+  if (nw !== cnf) { showErr(err, 'Passwords do not match'); return }
+  const users = DB.get('users') || []
+  const idx = users.findIndex(x => x.id === u.id)
+  users[idx].password = btoa(nw)
+  DB.set('users', users); state.currentUser = users[idx]
+  document.getElementById('pw-current').value = ''
+  document.getElementById('pw-new').value = ''
+  document.getElementById('pw-confirm').value = ''
+  showToast('Password updated successfully!', 'success')
+}
+
+// Recovery Email
+function updateRecoveryEmailUI() {
+  const u = state.currentUser; if (!u) return
+  const curEl = document.getElementById('recovery-current')
+  const addEl = document.getElementById('recovery-add')
+  if (u.recoveryEmail) {
+    curEl.style.display = 'flex'; addEl.style.display = 'none'
+    document.getElementById('recovery-email-display').textContent = u.recoveryEmail
+  } else {
+    curEl.style.display = 'none'; addEl.style.display = 'block'
+    document.getElementById('recovery-verify-wrap').style.display = 'none'
+    document.getElementById('recovery-send-wrap').style.display = 'block'
+    document.getElementById('recovery-input').value = ''
+  }
+}
+
+function sendVerifyCode() {
+  const email = document.getElementById('recovery-input').value.trim()
+  const err = document.getElementById('recovery-err')
+  err.style.display = 'none'
+  if (!email || !email.includes('@')) { showErr(err, 'Enter a valid email address'); return }
+  const code = Math.floor(100000 + Math.random() * 900000).toString()
+  state.pendingVerifyCode = code
+  state.pendingVerifyEmail = email
+  // In production this would send an actual email
+  document.getElementById('recovery-verify-wrap').style.display = 'block'
+  document.getElementById('recovery-send-wrap').style.display = 'none'
+  showToast(`Verification code: ${code} (shown here for demo — in production this is emailed)`, 'info')
+}
+
+function verifyCode() {
+  const digits = [...document.querySelectorAll('.code-digit')].map(i => i.value).join('')
+  if (digits === state.pendingVerifyCode) {
+    const users = DB.get('users') || []
+    const idx = users.findIndex(x => x.id === state.currentUser.id)
+    users[idx].recoveryEmail = state.pendingVerifyEmail
+    DB.set('users', users); state.currentUser = users[idx]
+    state.pendingVerifyCode = null; state.pendingVerifyEmail = null
+    updateRecoveryEmailUI()
+    showToast('Recovery email added!', 'success')
+  } else {
+    showToast('Incorrect code. Try again.', 'error')
+    document.querySelectorAll('.code-digit').forEach(d => d.value = '')
+    document.querySelectorAll('.code-digit')[0].focus()
+  }
+}
+
+function cancelEmailVerify() {
+  state.pendingVerifyCode = null; state.pendingVerifyEmail = null
+  document.getElementById('recovery-verify-wrap').style.display = 'none'
+  document.getElementById('recovery-send-wrap').style.display = 'block'
+  document.querySelectorAll('.code-digit').forEach(d => d.value = '')
+}
+
+function removeRecoveryEmail() {
+  const users = DB.get('users') || []
+  const idx = users.findIndex(x => x.id === state.currentUser.id)
+  users[idx].recoveryEmail = null; users[idx].notifTags = false
+  DB.set('users', users); state.currentUser = users[idx]
+  updateRecoveryEmailUI()
+  document.getElementById('notif-toggle').classList.remove('on')
+  showToast('Recovery email removed', 'info')
+}
+
+function codeNav(el, idx) {
+  if (el.value) {
+    const next = document.querySelectorAll('.code-digit')[idx+1]
+    if (next) next.focus()
+  }
+}
+
+// ── CHATLY ──
+function initChatly() {
+  renderServerList()
+  selectServer(state.currentServerId)
+  renderMembers()
+}
+
+function renderServerList() {
+  const servers = DB.get('servers') || []
+  const userServers = servers.filter(s => s.id !== 'global')
+  const list = document.getElementById('server-list')
+  list.innerHTML = userServers.map(s => `
+    <div class="server-icon ${s.id === state.currentServerId ? 'active' : ''}"
+      id="srv-${s.id}" title="${s.name}" onclick="selectServer('${s.id}')">
+      ${s.name[0].toUpperCase()}
+    </div>
+  `).join('')
+  document.getElementById('server-global').className = 'server-icon global-icon' + (state.currentServerId === 'global' ? ' active' : '')
+}
+
+function selectServer(id) {
+  state.currentServerId = id
+  const servers = DB.get('servers') || []
+  const server = servers.find(s => s.id === id)
+  if (!server) return
+  document.getElementById('channel-server-name').textContent = server.name
+  // render channels
+  const list = document.getElementById('channel-list')
+  list.innerHTML = `
+    <div class="channel-group-header">Channels</div>
+    ${server.channels.map(ch => `
+      <div class="channel-item ${ch.id === state.currentChannelId ? 'active' : ''}"
+        onclick="selectChannel('${ch.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        ${ch.name}
+      </div>
+    `).join('')}
+  `
+  // select first channel if current not in server
+  const hasChannel = server.channels.find(c => c.id === state.currentChannelId)
+  selectChannel(hasChannel ? state.currentChannelId : server.channels[0]?.id)
+  renderServerList()
+}
+
+function selectChannel(id) {
+  if (!id) return
+  state.currentChannelId = id
+  const servers = DB.get('servers') || []
+  const server = servers.find(s => s.id === state.currentServerId)
+  const channel = server?.channels.find(c => c.id === id)
+  if (!channel) return
+  document.getElementById('chat-channel-name').textContent = channel.name
+  // update active state
+  document.querySelectorAll('.channel-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick').includes(`'${id}'`))
+  })
+  renderMessages(channel.messages)
+}
+
+function renderMessages(messages) {
+  const container = document.getElementById('chat-messages')
+  if (!messages || messages.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text2)">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <div style="font-size:.9rem">Start the conversation</div>
+    </div>`
+    return
+  }
+  let html = ''
+  let lastDate = ''
+  for (const msg of messages) {
+    const date = new Date(msg.timestamp).toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric'})
+    if (date !== lastDate) {
+      html += `<div class="chat-day-divider">${date}</div>`
+      lastDate = date
+    }
+    html += renderMsg(msg)
+  }
+  container.innerHTML = html
+  container.scrollTop = container.scrollHeight
+}
+
+function renderMsg(msg) {
+  const users = DB.get('users') || []
+  const user = users.find(u => u.id === msg.userId)
+  const name = user ? (user.displayName || user.username) : (msg.displayName || 'Unknown')
+  const avatarStyle = user?.avatar ? `style="background:${strColor(msg.userId)}"` : `style="background:${strColor(msg.userId)}"`
+  const avatarContent = user?.avatar ? `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : name[0].toUpperCase()
+  const time = new Date(msg.timestamp).toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'})
+  let filesHtml = ''
+  if (msg.files && msg.files.length > 0) {
+    filesHtml = msg.files.map(f => {
+      if (f.type && f.type.startsWith('image/')) {
+        return `<img class="msg-img" src="${f.data}" alt="${f.name}" onclick="openImage('${f.data}')" loading="lazy">`
+      }
+      return `<div class="msg-file" onclick="downloadFile('${encodeURIComponent(JSON.stringify(f))}')">
+        <div style="width:32px;height:32px;background:var(--accent-light);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${fileIcon(f.name, 24)}
+        </div>
+        <div class="msg-file-info">
+          <div class="msg-file-name">${f.name}</div>
+          <div class="msg-file-size">${formatSize(f.size)} · Click to download</div>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>`
+    }).join('')
+  }
+  return `<div class="msg">
+    <div class="msg-avatar avatar" ${avatarStyle}>${avatarContent}</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-name">${escHtml(name)}</span>
+        <span class="msg-time">${time}</span>
+      </div>
+      ${msg.content ? `<div class="msg-content">${escHtml(msg.content)}</div>` : ''}
+      ${filesHtml}
+    </div>
+  </div>`
+}
+
+function sendMessage() {
+  if (!state.currentUser) { requireLogin(); return }
+  const input = document.getElementById('chat-input')
+  const text = input.value.trim()
+  if (!text && state.attachedFiles.length === 0) return
+  const servers = DB.get('servers') || []
+  const sIdx = servers.findIndex(s => s.id === state.currentServerId)
+  const cIdx = servers[sIdx].channels.findIndex(c => c.id === state.currentChannelId)
+  const msg = {
+    id: Date.now().toString(),
+    userId: state.currentUser.id,
+    displayName: state.currentUser.displayName || state.currentUser.username,
+    content: text,
+    files: state.attachedFiles,
+    timestamp: Date.now()
+  }
+  servers[sIdx].channels[cIdx].messages.push(msg)
+  DB.set('servers', servers)
+  input.value = ''; input.style.height = 'auto'
+  state.attachedFiles = []
+  document.getElementById('attached-files-preview').innerHTML = ''
+  document.getElementById('attached-files-preview').style.display = 'none'
+  // Append message to DOM
+  const container = document.getElementById('chat-messages')
+  const emptyEl = container.querySelector('div[style]')
+  if (emptyEl) container.innerHTML = ''
+  container.insertAdjacentHTML('beforeend', renderMsg(msg))
+  container.scrollTop = container.scrollHeight
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto'
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+}
+
+function attachFiles(event) {
+  const files = [...event.target.files]
+  const preview = document.getElementById('attached-files-preview')
+  preview.style.display = 'flex'
+  files.forEach(file => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const f = { name: file.name, type: file.type, size: file.size, data: e.target.result }
+      state.attachedFiles.push(f)
+      const el = document.createElement('div')
+      el.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.78rem;max-width:180px'
+      el.innerHTML = `${fileIcon(file.name,14)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(file.name)}</span>`
+      preview.appendChild(el)
+    }
+    reader.readAsDataURL(file)
+  })
+  event.target.value = ''
+}
+
+function downloadFile(encoded) {
+  const f = JSON.parse(decodeURIComponent(encoded))
+  const a = document.createElement('a')
+  a.href = f.data; a.download = f.name; a.click()
+}
+
+function renderMembers() {
+  const users = DB.get('users') || []
+  const ml = document.getElementById('members-list')
+  ml.innerHTML = users.length === 0 ? '<div style="font-size:.8rem;color:var(--text3)">No members yet</div>' :
+    users.map(u => `
+      <div class="member-item">
+        <div class="avatar" style="width:28px;height:28px;font-size:.7rem;background:${strColor(u.id)}">
+          ${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (u.displayName||u.username)[0].toUpperCase()}
+        </div>
+        <span style="font-size:.82rem">${escHtml(u.displayName || u.username)}</span>
+        <div class="online-dot" style="margin-left:auto"></div>
+      </div>
+    `).join('')
+  document.getElementById('chat-online-count').textContent = users.length + ' online'
+}
+
+function showAddServer() {
+  if (!state.currentUser) { requireLogin(); return }
+  document.getElementById('server-name-input').value = ''
+  document.getElementById('server-code-input').value = ''
+  document.getElementById('server-err').style.display = 'none'
+  openModal('modal-addserver')
+}
+
+function joinOrCreateServer() {
+  const name = document.getElementById('server-name-input').value.trim()
+  const code = document.getElementById('server-code-input').value.trim()
+  const err = document.getElementById('server-err')
+  err.style.display = 'none'
+  if (!name) { showErr(err, 'Enter a server name'); return }
+  const servers = DB.get('servers') || []
+  // If code provided, find existing server
+  if (code) {
+    const existing = servers.find(s => s.code === code)
+    if (!existing) { showErr(err, `No server found with code "${code}"`); return }
+    state.currentServerId = existing.id
+    DB.set('servers', servers)
+    closeModal('modal-addserver')
+    renderServerList()
+    selectServer(existing.id)
+    showToast(`Joined "${existing.name}"!`, 'success')
+    return
+  }
+  // Create new server
+  const generatedCode = 'Bacon!'
+  const server = {
+    id: 'srv_'+Date.now(),
+    name, code: generatedCode,
+    channels: [
+      { id: 'gen_'+Date.now(), name: 'general', messages: [] },
+      { id: 'med_'+Date.now(), name: 'media', messages: [] },
+    ]
+  }
+  servers.push(server)
+  DB.set('servers', servers)
+  state.currentServerId = server.id
+  closeModal('modal-addserver')
+  renderServerList()
+  selectServer(server.id)
+  showToast(`Server "${name}" created! Code: ${generatedCode}`, 'success')
+}
+
+function openImage(src) {
+  document.getElementById('lightbox-img').src = src
+  openModal('modal-image')
+}
+
+// ── COMPLUTO ──
+function initCompluto() {
+  state.currentFolderId = null
+  state.complutoFilter = 'all'
+  state.selectedFiles = new Set()
+  renderCompluto()
+  updateStorageBar()
+}
+
+function getUserFiles() {
+  const all = DB.get('compluto_files') || {}
+  return all[state.currentUser.id] || []
+}
+
+function saveUserFiles(files) {
+  const all = DB.get('compluto_files') || {}
+  all[state.currentUser.id] = files
+  DB.set('compluto_files', all)
+}
+
+function renderCompluto(searchQuery = '') {
+  let files = getUserFiles()
+  // Filter by current folder
+  let filteredFiles = files.filter(f => f.parentId === state.currentFolderId)
+  // Apply category filter
+  if (state.complutoFilter === 'images') filteredFiles = filteredFiles.filter(f => !f.isFolder && f.type?.startsWith('image/'))
+  else if (state.complutoFilter === 'videos') filteredFiles = filteredFiles.filter(f => !f.isFolder && f.type?.startsWith('video/'))
+  else if (state.complutoFilter === 'docs') filteredFiles = filteredFiles.filter(f => !f.isFolder && !f.type?.startsWith('image/') && !f.type?.startsWith('video/'))
+  else if (state.complutoFilter === 'recent') {
+    filteredFiles = [...files].filter(f => !f.isFolder).sort((a,b) => b.createdAt - a.createdAt).slice(0,20)
+  }
+  // Search
+  if (searchQuery) filteredFiles = filteredFiles.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Sort: folders first
+  filteredFiles.sort((a,b) => (b.isFolder?1:0) - (a.isFolder?1:0) || a.name.localeCompare(b.name))
+  // Render breadcrumb
+  renderBreadcrumb(files)
+  const container = document.getElementById('file-container')
+  if (filteredFiles.length === 0) {
+    container.className = ''
+    container.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+      <h4>Nothing here yet</h4>
+      <p>Upload files or create a new folder to get started</p>
+    </div>`
+    return
+  }
+  const isGrid = state.complutoView === 'grid'
+  container.className = isGrid ? 'file-grid' : 'file-list'
+  container.innerHTML = filteredFiles.map(f => isGrid ? renderFileGrid(f) : renderFileList(f)).join('')
+}
+
+function renderFileGrid(f) {
+  const sel = state.selectedFiles.has(f.id) ? 'selected' : ''
+  return `<div class="file-item-grid ${sel}" id="fi-${f.id}"
+    onclick="selectFile('${f.id}',event)"
+    ondblclick="openFile('${f.id}')"
+    oncontextmenu="showCtxMenu('${f.id}',event)">
+    <div class="file-icon">
+      ${f.isFolder ? folderIcon(40) : fileIconLg(f.name, f.type, f.data)}
+    </div>
+    <div class="file-name">${escHtml(f.name)}</div>
+    <div class="file-meta">${f.isFolder ? 'Folder' : formatSize(f.size)}</div>
+  </div>`
+}
+
+function renderFileList(f) {
+  const sel = state.selectedFiles.has(f.id) ? 'selected' : ''
+  return `<div class="file-item-list ${sel}" id="fi-${f.id}"
+    onclick="selectFile('${f.id}',event)"
+    ondblclick="openFile('${f.id}')"
+    oncontextmenu="showCtxMenu('${f.id}',event)">
+    <div class="file-icon">${f.isFolder ? folderIcon(20) : fileIcon(f.name, 20)}</div>
+    <div class="file-name">${escHtml(f.name)}</div>
+    <div class="file-meta">
+      ${f.isFolder ? 'Folder' : formatSize(f.size)}<br>
+      <span style="font-size:.72rem">${new Date(f.createdAt).toLocaleDateString()}</span>
+    </div>
+  </div>`
+}
+
+function renderBreadcrumb(files) {
+  const bc = document.getElementById('breadcrumb')
+  let path = []
+  let folderId = state.currentFolderId
+  while (folderId) {
+    const folder = files.find(f => f.id === folderId)
+    if (!folder) break
+    path.unshift(folder)
+    folderId = folder.parentId
+  }
+  bc.innerHTML = `<span onclick="complutoNav('all')">All Files</span>` +
+    path.map(f => `<span class="sep">/</span><span onclick="openFolder('${f.id}')">${escHtml(f.name)}</span>`).join('')
+}
+
+function selectFile(id, e) {
+  if (e && e.ctrlKey) {
+    state.selectedFiles.has(id) ? state.selectedFiles.delete(id) : state.selectedFiles.add(id)
+  } else {
+    state.selectedFiles = new Set([id])
+  }
+  document.querySelectorAll('[id^="fi-"]').forEach(el => {
+    el.classList.toggle('selected', state.selectedFiles.has(el.id.replace('fi-','')))
+  })
+}
+
+function openFile(id) {
+  const files = getUserFiles()
+  const f = files.find(x => x.id === id)
+  if (!f) return
+  if (f.isFolder) { openFolder(id); return }
+  if (f.type?.startsWith('image/')) { openImage(f.data); return }
+  // Download
+  const a = document.createElement('a')
+  a.href = f.data; a.download = f.name; a.click()
+}
+
+function openFolder(id) {
+  state.currentFolderId = id
+  state.selectedFiles = new Set()
+  renderCompluto()
+}
+
+function createFolder() {
+  showPrompt('New Folder', 'Enter a name for the new folder:', '', (name) => {
+    if (!name.trim()) return
+    const files = getUserFiles()
+    files.push({ id:'f_'+Date.now(), name:name.trim(), isFolder:true, parentId:state.currentFolderId, createdAt:Date.now() })
+    saveUserFiles(files); renderCompluto()
+    showToast('Folder created', 'success')
+  })
+}
+
+function complutoUpload(event) {
+  const filesList = [...event.target.files]
+  let loaded = 0
+  filesList.forEach(file => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const files = getUserFiles()
+      files.push({ id:'f_'+Date.now()+'_'+Math.random().toString(36).slice(2), name:file.name, type:file.type, size:file.size, data:e.target.result, isFolder:false, parentId:state.currentFolderId, createdAt:Date.now() })
+      saveUserFiles(files)
+      loaded++
+      if (loaded === filesList.length) { renderCompluto(); updateStorageBar(); showToast(`${loaded} file${loaded>1?'s':''} uploaded!`, 'success') }
+    }
+    reader.readAsDataURL(file)
+  })
+  event.target.value = ''
+}
+
+function complutoSearch(q) { renderCompluto(q) }
+
+function complutoNav(filter) {
+  state.complutoFilter = filter
+  state.currentFolderId = filter === 'all' ? null : state.currentFolderId
+  if (['images','videos','docs','recent'].includes(filter)) state.currentFolderId = null
+  document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.id === 'nav-'+filter))
+  renderCompluto()
+}
+
+function setView(v) {
+  state.complutoView = v
+  document.getElementById('vb-grid').classList.toggle('active', v==='grid')
+  document.getElementById('vb-list').classList.toggle('active', v==='list')
+  renderCompluto()
+}
+
+function showCtxMenu(id, e) {
+  e.preventDefault()
+  state.ctxTargetId = id
+  const files = getUserFiles()
+  const f = files.find(x => x.id === id)
+  const menu = document.getElementById('ctx-menu')
+  document.getElementById('ctx-open').style.display = f.isFolder ? 'flex' : 'none'
+  document.getElementById('ctx-download').style.display = f.isFolder ? 'none' : 'flex'
+  menu.style.display = 'block'
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px'
+  menu.style.top = Math.min(e.clientY, window.innerHeight - 160) + 'px'
+}
+
+function ctxAction(action) {
+  const id = state.ctxTargetId; if (!id) return
+  document.getElementById('ctx-menu').style.display = 'none'
+  const files = getUserFiles()
+  const f = files.find(x => x.id === id)
+  if (!f) return
+  if (action === 'open') { openFile(id) }
+  else if (action === 'download') { if (f.data) { const a=document.createElement('a');a.href=f.data;a.download=f.name;a.click() } }
+  else if (action === 'rename') {
+    showPrompt('Rename', 'Enter new name:', f.name, (name) => {
+      if (!name.trim()) return
+      const files2 = getUserFiles()
+      const idx = files2.findIndex(x => x.id === id)
+      files2[idx].name = name.trim(); saveUserFiles(files2); renderCompluto()
+      showToast('Renamed successfully', 'success')
+    })
+  }
+  else if (action === 'delete') {
+    // Delete file and all children if folder
+    const files2 = getUserFiles()
+    const toDelete = new Set()
+    const collect = (pid) => { files2.filter(x => x.parentId === pid).forEach(x => { toDelete.add(x.id); if(x.isFolder) collect(x.id) }) }
+    toDelete.add(id); if (f.isFolder) collect(id)
+    saveUserFiles(files2.filter(x => !toDelete.has(x.id)))
+    renderCompluto(); updateStorageBar()
+    showToast('Deleted', 'info')
+  }
+}
+
+function updateStorageBar() {
+  const files = getUserFiles().filter(f => !f.isFolder)
+  const total = files.reduce((s,f) => s + (f.size||0), 0)
+  const max = 100*1024*1024 // 100MB "limit"
+  const pct = Math.min(100, (total/max)*100)
+  document.getElementById('storage-bar').style.width = pct + '%'
+  document.getElementById('storage-label').textContent = formatSize(total) + ' used'
+}
+
+// ── PROMPT MODAL ──
+function showPrompt(title, desc, defaultVal, callback) {
+  document.getElementById('prompt-title').textContent = title
+  document.getElementById('prompt-desc').textContent = desc
+  document.getElementById('prompt-input').value = defaultVal
+  state.promptCallback = callback
+  openModal('modal-prompt')
+  setTimeout(() => document.getElementById('prompt-input').focus(), 100)
+}
+
+function promptConfirm() {
+  const val = document.getElementById('prompt-input').value
+  if (state.promptCallback) state.promptCallback(val)
+  closeModal('modal-prompt')
+  state.promptCallback = null
+}
+
+// ── MODAL ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open')
+  document.getElementById(id).style.display = 'flex'
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open')
+  document.getElementById(id).style.display = 'none'
+}
+
+// ── TOAST ──
+function showToast(msg, type='info') {
+  const container = document.getElementById('toast-container')
+  const el = document.createElement('div')
+  el.className = `toast ${type}`
+  el.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${type==='success'?'var(--green)':type==='error'?'var(--red)':'var(--accent)'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      ${type==='success'?'<polyline points="20 6 9 17 4 12"/>':type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
+    </svg>
+    ${escHtml(msg)}
+  `
+  container.appendChild(el)
+  setTimeout(() => { el.style.animation = 'slideOut .3s forwards'; setTimeout(() => el.remove(), 300) }, 3500)
+}
+
+// ── HELPERS ──
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block' }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function formatSize(bytes) {
+  if (!bytes) return '0 B'
+  const u = ['B','KB','MB','GB']; let i = 0
+  while (bytes >= 1024 && i < 3) { bytes /= 1024; i++ }
+  return bytes.toFixed(1) + ' ' + u[i]
+}
+function fileIcon(name, size=16) {
+  const ext = name.split('.').pop().toLowerCase()
+  let color = '#6b7280'
+  if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) color = '#16a34a'
+  else if (['mp4','mov','avi','webm','mkv'].includes(ext)) color = '#7c3aed'
+  else if (['pdf'].includes(ext)) color = '#dc2626'
+  else if (['doc','docx','txt','md'].includes(ext)) color = '#1c4fd8'
+  else if (['zip','rar','7z'].includes(ext)) color = '#ea580c'
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+}
+function fileIconLg(name, type, data) {
+  if (type?.startsWith('image/') && data) {
+    return `<img src="${data}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:block">`
+  }
+  return fileIcon(name, 32)
+}
+function folderIcon(size=20) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`
+}
+
+// ── GLOBAL EVENTS ──
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) closeDropdowns()
+  if (!e.target.closest('.ctx-menu') && !e.target.closest('[oncontextmenu]')) {
+    document.getElementById('ctx-menu').style.display = 'none'
+  }
+})
+document.addEventListener('contextmenu', (e) => {
+  if (!e.target.closest('[oncontextmenu]')) {
+    document.getElementById('ctx-menu').style.display = 'none'
+  }
+})
+document.getElementById('prompt-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') promptConfirm()
+  if (e.key === 'Escape') closeModal('modal-prompt')
+})
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModal('modal-guest'); closeModal('modal-addserver'); closeModal('modal-image')
+    document.getElementById('ctx-menu').style.display = 'none'
+  }
+})
+
+// ── INIT ──
+;(function init() {
+  initData()
+  const sid = DB.get('session')
+  if (sid) {
+    const users = DB.get('users') || []
+    const user = users.find(u => u.id === sid)
+    if (user) loginUser(user)
+    else { DB.del('session'); showPage('home') }
+  } else {
+    showPage('home')
+  }
+})()
+</script>
+</body>
+</html>
